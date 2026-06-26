@@ -26,11 +26,11 @@ if platform.is_win then
 
    options.wsl_domains = {
       {
-         name = 'wsl:ubuntu-bash',
-         distribution = 'Ubuntu',
+         name = 'wsl:arch-bash',
+         distribution = 'archlinux',
          username = 'zbz',
          default_cwd = '/home/zbz',
-         default_prog = { 'bash', '-l' },
+         default_prog = { 'zsh', '-l' },
       },
    }
 end
