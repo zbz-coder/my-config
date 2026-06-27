@@ -174,10 +174,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 			return
 		end
 
-		local cursor_pos = vim.api.nvim_win_get_cursor(0) -- {row, col}
-		local row_before = cursor_pos[1]
-		local col_before = cursor_pos[2]
-
 		pcall(vim.lsp.buf.format, {
 			bufnr = args.buf,
 			timeout_ms = 2000,
@@ -185,14 +181,13 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 				return c.name == "efm"
 			end,
 		})
-
-		local line_count = vim.api.nvim_buf_line_count(args.buf)
-		local new_row = math.min(row_before, line_count)
-		local new_col =
-			math.min(col_before, #vim.api.nvim_buf_get_lines(args.buf, new_row - 1, new_row, false)[1] or "")
-		vim.api.nvim_win_set_cursor(0, { new_row, new_col })
 	end,
 })
+
+-- format file
+vim.keymap.set("n", "<leader>cf", function()
+	vim.lsp.buf.format()
+end, { desc = "code format" })
 
 -- highlight yanked text
 vim.api.nvim_create_autocmd("TextYankPost", {
@@ -244,8 +239,9 @@ vim.pack.add({
 	{ src = "https://github.com/neovim/nvim-lspconfig" },
 	{ src = "https://github.com/mason-org/mason.nvim" },
 	{ src = "https://github.com/creativenull/efmls-configs-nvim" },
-	{ src = "https://github.com/saghen/blink.cmp", version = vim.version.range("1.*") },
+	{ src = "https://github.com/saghen/blink.cmp" },
 	{ src = "https://github.com/L3MON4D3/LuaSnip" },
+	{ src = "https://github.com/rafamadriz/friendly-snippets" },
 })
 
 -- ==============================
@@ -364,9 +360,6 @@ vim.keymap.set("n", "<leader>hd", function()
 end, { desc = "Diff this" })
 
 -- nvim-treesitter config
-vim.env.CC = "gcc"
-vim.env.CXX = "g++"
-
 local setup_treesitter = function()
 	local treesitter = require("nvim-treesitter")
 	treesitter.setup({})
@@ -388,6 +381,7 @@ local setup_treesitter = function()
 		"tsx",
 		"typescript",
 		"vue",
+		"bash",
 	}
 
 	local config = require("nvim-treesitter.config")
@@ -583,16 +577,12 @@ vim.lsp.config("lua_ls", {
 })
 vim.lsp.config("pyright", {})
 vim.lsp.config("bashls", {})
-vim.lsp.config("ts_ls", {})
 vim.lsp.config("gopls", {})
 vim.lsp.config("clangd", {})
+vim.lsp.config("html", {})
+vim.lsp.config("cssls", {})
+vim.lsp.config("ts_ls", {})
 vim.lsp.config("vue_ls", {})
-
-vim.g.rustaceanvim = {
-	server = {
-		capabilities = require("blink.cmp").get_lsp_capabilities(),
-	},
-}
 
 do
 	local luacheck = require("efmls-configs.linters.luacheck")
@@ -640,8 +630,8 @@ do
 				c = { clangfmt, cpplint },
 				go = { gofumpt, go_revive },
 				cpp = { clangfmt, cpplint },
-				css = { prettier_d },
 				html = { prettier_d },
+				css = { prettier_d },
 				javascript = { eslint_d, prettier_d },
 				javascriptreact = { eslint_d, prettier_d },
 				json = { eslint_d, fixjson },
@@ -662,11 +652,13 @@ vim.lsp.enable({
 	"lua_ls",
 	"pyright",
 	"bashls",
-	"ts_ls",
 	"gopls",
 	"clangd",
-	"efm",
+	"html",
+	"cssls",
+	"ts_ls",
 	"vue_ls",
+	"efm",
 })
 
 -- ============================================================================
