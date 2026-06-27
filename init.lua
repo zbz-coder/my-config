@@ -586,6 +586,7 @@ vim.lsp.config("bashls", {})
 vim.lsp.config("ts_ls", {})
 vim.lsp.config("gopls", {})
 vim.lsp.config("clangd", {})
+vim.lsp.config("vue_ls", {})
 
 vim.g.rustaceanvim = {
 	server = {
@@ -665,6 +666,7 @@ vim.lsp.enable({
 	"gopls",
 	"clangd",
 	"efm",
+	"vue_ls",
 })
 
 -- ============================================================================
@@ -753,4 +755,3 @@ vim.keymap.set("t", "<C-q>", function()
 		terminal_state.is_open = false
 	end
 end, { noremap = true, silent = true, desc = "Close floating terminal" })
-
